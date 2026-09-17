@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>法芮 AI 營運儀表板</title>
+  <style>:root{--leaf:#67a95f;--gold:#e3ad3f;--red:#d65d5d}*{box-sizing:border-box}body{margin:0;font-family:"Microsoft JhengHei",system-ui,sans-serif;background:#f3f7f4;color:#14201d}header{position:sticky;top:0;z-index:10;background:rgba(243,247,244,.94);backdrop-filter:blur(14px);border-bottom:1px solid #d9e6df;padding:14px 28px}.brand{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand strong{font-size:18px;color:#103b35}.role{display:flex;gap:8px;align-items:center;color:#61706b;font-size:14px}main{padding:26px clamp(16px,4vw,44px) 46px}h1{margin:0;color:#103b35;font-size:clamp(2rem,5vw,4.4rem);line-height:1.05;letter-spacing:0}.lead{max-width:980px;color:#61706b;font-size:18px;line-height:1.7}.filters{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;margin-top:22px;padding:16px;background:#fff;border:1px solid #d9e6df;border-radius:8px;box-shadow:0 12px 30px rgba(16,59,53,.08)}label{display:grid;gap:6px;color:#61706b;font-weight:800;font-size:14px}select,input{width:100%;min-height:42px;border:1px solid #d9e6df;border-radius:8px;background:#fbfdfb;padding:9px 11px;color:#14201d}button{min-height:42px;border:0;border-radius:8px;background:#103b35;color:#fff;padding:0 15px;font-weight:900;cursor:pointer}.secondary{background:#fff;color:#103b35;border:1px solid #103b35}.ghost{background:#eef6f0;color:#103b35}.grid{display:grid;gap:18px;margin-top:20px}.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.card,.panel{background:#fff;border:1px solid #d9e6df;border-radius:8px;padding:16px;box-shadow:0 10px 26px rgba(16,59,53,.06)}.card small{display:block;color:#61706b;font-weight:800}.card strong{display:block;margin-top:7px;color:#103b35;font-size:28px}.card span{font-size:13px;color:#61706b}.two{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(360px,.75fr);gap:18px}.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}h2{margin:0 0 14px;color:#103b35;font-size:24px}.table-wrap{overflow:auto;border:1px solid #d9e6df;border-radius:8px}table{width:100%;border-collapse:collapse;background:#fff;min-width:760px}th,td{padding:12px;border-bottom:1px solid #e8f0ec;text-align:left;vertical-align:top}th{background:#f7fbf8;color:#61706b;font-size:13px}td strong{color:#103b35}.pill{display:inline-flex;align-items:center;justify-content:center;min-width:48px;border-radius:999px;padding:4px 9px;color:#fff;font-size:12px;font-weight:900}.green{background:#67a95f}.yellow{background:#e3ad3f}.red{background:#d65d5d}.bar{height:11px;border-radius:999px;background:#edf3ef;overflow:hidden}.bar span{display:block;height:100%;width:var(--w);background:var(--c)}.staff-row,.health-row{display:grid;grid-template-columns:110px 1fr 54px;align-items:center;gap:10px;margin:13px 0}.health-row{grid-template-columns:130px 1fr 54px}.scorebox{display:grid;place-items:center;text-align:center;min-height:220px;border-radius:8px;background:radial-gradient(circle at center,#fff 0 52%,transparent 53%),conic-gradient(var(--scoreColor) 0 var(--scorePct),#edf3ef var(--scorePct) 100%)}.scorebox strong{font-size:62px;color:#103b35;line-height:1}.scorebox span{color:#61706b;font-weight:800}.records{display:grid;gap:10px}.record{border:1px solid #d9e6df;border-radius:8px;padding:12px;background:#fbfdfb}.record strong{color:#103b35}.slidebox{white-space:pre-wrap;line-height:1.7;min-height:260px;background:#fbfdfb;border:1px solid #d9e6df;border-radius:8px;padding:14px;color:#14201d}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.note{color:#61706b;font-size:13px;line-height:1.6}@media(max-width:1100px){.filters,.two{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:1fr}}@media(max-width:680px){header{padding:12px 16px}main{padding:20px 14px}.cards{grid-template-columns:1fr}.staff-row,.health-row{grid-template-columns:1fr}.filters{padding:12px}}
+  </style>
+</head>
+<body>
+  <header><div class="brand"><strong>Fairy AI 營運儀表板</strong><div class="role">總部主管 / 業務人員查詢</div></div></header>
+  <main>
+    <h1>分店營運狀態與每月健檢</h1>
+    <p class="lead">選擇門店與日期區間後，儀表板會帶出即時客流、票券轉課程、顧客消費、課程使用、頭療師業績進度，以及每月六項健康指標。營運狀況與健檢都能一鍵生成簡報大綱。</p>
+
+    <section class="filters" aria-label="查詢條件">
+      <label>門店名稱<select id="storeSelect"></select></label>
+      <label>起始日<input id="startDate" type="date" value="2026-09-01"></label>
+      <label>結束日<input id="endDate" type="date" value="2026-09-17"></label>
+      <div><span style="display:block;height:20px"></span><button id="queryBtn" aria-label="查詢營運狀況">查詢營運狀況</button></div>
+    </section>
+
+    <section class="grid">
+      <div class="cards" aria-label="營運總覽">
+        <div class="card"><small>即時客流量</small><strong id="trafficNow">-</strong><span id="trafficHint">今日到店 / 目前館內</span></div>
+        <div class="card"><small>票券轉課程</small><strong id="voucherRate">-</strong><span id="voucherHint">體驗券轉店內課程</span></div>
+        <div class="card"><small>消費金額</small><strong id="salesTotal">-</strong><span>療程 + 產品 + 組合</span></div>
+        <div class="card"><small>課程使用</small><strong id="courseUsage">-</strong><span>已使用 / 已購買</span></div>
+        <div class="card"><small>門店健康分</small><strong id="healthTotal">-</strong><span id="healthHint">六項健康指標</span></div>
+      </div>
+
+      <section class="two">
+        <div class="panel">
+          <h2>&lt;分店營運狀態&gt;</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>項目</th><th>本期數據</th><th>狀態</th><th>總部診斷</th></tr></thead>
+              <tbody id="opsTable"></tbody>
+            </table>
+          </div>
+          <div class="actions"><button id="makeOpsDeck">生成營運狀況簡報</button><button class="secondary" id="downloadOpsDeck">下載簡報文字</button></div>
+        </div>
+        <div class="panel">
+          <h2>頭療師銷售與療程業績</h2>
+          <div id="staffProgress"></div>
+        </div>
+      </section>
+
+      <section class="three">
+        <div class="panel">
+          <h2>客戶消費紀錄</h2>
+          <div class="records" id="purchaseRecords"></div>
+        </div>
+        <div class="panel">
+          <h2>課程使用紀錄</h2>
+          <div class="records" id="courseRecords"></div>
+        </div>
+        <div class="panel">
+          <h2>票券轉課程追蹤</h2>
+          <div class="records" id="voucherRecords"></div>
+        </div>
+      </section>
+
+      <section class="two">
+        <div class="panel">
+          <h2>&lt;營運健檢&gt; 每月六項健康指標</h2>
+          <div id="healthRows"></div>
+          <div class="actions"><button id="makeHealthDeck">生成營運健檢簡報</button><button class="secondary" id="downloadHealthDeck">下載健檢簡報文字</button></div>
+        </div>
+        <div class="panel">
+          <h2>門店健康分數</h2>
+          <div class="scorebox" id="scoreBox"><div><strong id="scoreText">-</strong><span id="scoreState">-</span></div></div>
+          <p class="note" id="scoreAdvice"></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>簡報產出預覽</h2>
+        <div class="slidebox" id="slidePreview">請先點選「生成營運狀況簡報」或「生成營運健檢簡報」。</div>
+      </section>
+    </section>
+  </main>
+
+<script>
+const officialStores = [
+  {name:'中正古亭店', area:'北部', address:'台北市中正區南昌路二段202巷8號', base:92},
+  {name:'新莊幸福店', area:'北部', address:'新北市新莊區福美街62巷9號', base:88},
+  {name:'板橋忠孝店', area:'北部', address:'新北市板橋區忠孝路191號2樓', base:80},
+  {name:'台南永華店', area:'南部', address:'臺南市安平區永華路2段703號', base:76},
+  {name:'岡山壽天店', area:'南部', address:'高雄市岡山區公園東路96號2樓', base:72},
+  {name:'八德東店', area:'南部', address:'高雄市仁武區八德東路262號', base:69}
+];
+const $ = id => document.getElementById(id);
+const money = n => '$' + Math.round(n).toLocaleString('zh-TW');
+const pct = n => Math.round(n) + '%';
+const state = n => n >= 82 ? ['綠燈','green'] : n >= 68 ? ['黃燈','yellow'] : ['紅燈','red'];
+function seed(store, start, end){
+  const code = [...(store.name + start + end)].reduce((a,ch)=>a+ch.charCodeAt(0),0);
+  const wiggle = (m, spread=10) => Math.round(m + ((code % (spread*2+1))-spread));
+  const b = store.base;
+  return {
+    trafficToday: Math.max(22, wiggle(b + 18, 18)), inStore: Math.max(3, wiggle(9, 4)), newCustomers: Math.max(18, wiggle(b*1.1, 20)), reservations: Math.max(24, wiggle(b*1.25, 22)), arrivals: Math.max(20, wiggle(b*1.02, 20)),
+    vouchers: Math.max(18, wiggle(b*.8, 18)), voucherCourses: Math.max(9, wiggle(b*.48, 16)), trialMembers: Math.max(8, wiggle(b*.42, 14)), courseDeals: Math.max(10, wiggle(b*.5, 16)),
+    treatmentSales: Math.max(180000, wiggle(b*5200, 45000)), productSales: Math.max(60000, wiggle(b*1800, 22000)), comboSales: Math.max(70000, wiggle(b*2300, 26000)),
+    coursesBought: Math.max(80, wiggle(b*1.45, 24)), coursesUsed: Math.max(48, wiggle(b*1.02, 20)), nps: Math.max(56, Math.min(96, wiggle(b+4, 11))), complaints: Math.max(0, 8 - Math.round(b/15) + (code%3)), sleeping: Math.max(6, wiggle(34-b/3, 8)), retention: Math.max(68, Math.min(98, wiggle(b+6, 9)))
+  };
+}
+function buildData(){
+  const store = officialStores.find(s=>s.name === $('storeSelect').value) || officialStores[0];
+  const d = seed(store, $('startDate').value, $('endDate').value);
+  d.store = store;
+  d.voucherRate = Math.round(d.voucherCourses / d.vouchers * 100);
+  d.totalSales = d.treatmentSales + d.productSales + d.comboSales;
+  d.courseUsageRate = Math.round(d.coursesUsed / d.coursesBought * 100);
+  d.health = {
+    '流量健康': Math.round((d.newCustomers*.34 + d.reservations*.33 + d.arrivals*.33) / 1.15),
+    '成交健康': Math.round((d.trialMembers / Math.max(1,d.vouchers) * 100)*.48 + (d.courseDeals / Math.max(1,d.arrivals) * 100)*.52),
+    '客單健康': Math.round(Math.min(98, (d.totalSales / Math.max(1,d.arrivals)) / 85)),
+    '回訪健康': Math.round(Math.max(45, Math.min(96, 92 - d.sleeping + d.retention*.18))),
+    '人員健康': Math.round(Math.max(48, Math.min(98, d.retention*.55 + d.courseDeals*.85))),
+    '顧客健康': Math.round(Math.max(42, Math.min(98, d.nps - d.complaints*2 - d.sleeping*.22)))
+  };
+  d.healthScore = Math.round(Object.values(d.health).reduce((a,b)=>a+b,0)/6);
+  d.staff = [
+    {name:'Ariel', sales: Math.round(d.totalSales*.32), salesGoal: 230000, course: Math.round(d.courseDeals*.33), courseGoal: 16},
+    {name:'Mina', sales: Math.round(d.totalSales*.27), salesGoal: 210000, course: Math.round(d.courseDeals*.27), courseGoal: 14},
+    {name:'Nora', sales: Math.round(d.totalSales*.22), salesGoal: 185000, course: Math.round(d.courseDeals*.22), courseGoal: 12},
+    {name:'Yuna', sales: Math.round(d.totalSales*.19), salesGoal: 160000, course: Math.round(d.courseDeals*.18), courseGoal: 10}
+  ];
+  return d;
+}
+function bar(width, cls){ return `<div class="bar"><span style="--w:${Math.min(100,Math.max(3,width))}%;--c:var(--${cls})"></span></div>`; }
+function render(){
+  const d = buildData();
+  $('trafficNow').textContent = d.trafficToday + ' / ' + d.inStore;
+  $('voucherRate').textContent = pct(d.voucherRate);
+  $('salesTotal').textContent = money(d.totalSales);
+  $('courseUsage').textContent = d.coursesUsed + ' / ' + d.coursesBought;
+  $('healthTotal').textContent = d.healthScore;
+  $('healthHint').textContent = state(d.healthScore)[0];
+  const rows = [
+    ['即時客流量', `${d.trafficToday} 人到店，館內 ${d.inStore} 人`, d.newCustomers, `新客 ${d.newCustomers}、預約 ${d.reservations}、到店 ${d.arrivals}`],
+    ['票券轉換店內課程', `${d.vouchers} 張體驗票，${d.voucherCourses} 張轉課程`, d.voucherRate, d.voucherRate>=68?'轉換穩定，可加推會員方案':'需檢查體驗後銜接話術'],
+    ['客戶消費紀錄', money(d.totalSales), Math.min(100, d.totalSales/5200), `療程 ${money(d.treatmentSales)}；產品 ${money(d.productSales)}；組合 ${money(d.comboSales)}`],
+    ['課程使用紀錄', `${d.coursesUsed}/${d.coursesBought} 堂`, d.courseUsageRate, d.courseUsageRate>=72?'使用節奏正常':'需提醒未使用課程與回訪'],
+    ['頭療師銷售與療程業績', `${d.staff.length} 位頭療師`, d.health['人員健康'], '查看右側個人進度條']
+  ];
+  $('opsTable').innerHTML = rows.map(r=>{const s=state(r[2]);return `<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td><span class="pill ${s[1]}">${s[0]}</span></td><td>${r[3]}</td></tr>`}).join('');
+  $('staffProgress').innerHTML = d.staff.map(p=>{
+    const salesPct = Math.round(p.sales/p.salesGoal*100), coursePct = Math.round(p.course/p.courseGoal*100);
+    return `<div style="margin-bottom:18px"><strong>${p.name}</strong><div class="staff-row"><span>銷售 ${pct(salesPct)}</span>${bar(salesPct, salesPct>=82?'leaf':salesPct>=68?'gold':'red')}<b>${money(p.sales)}</b></div><div class="staff-row"><span>療程 ${pct(coursePct)}</span>${bar(coursePct, coursePct>=82?'leaf':coursePct>=68?'gold':'red')}<b>${p.course}/${p.courseGoal}</b></div></div>`;
+  }).join('');
+  $('purchaseRecords').innerHTML = [
+    ['王小姐','療程組合',d.treatmentSales*.11],['陳小姐','頭皮產品',d.productSales*.16],['林先生','眠舒壓課程',d.treatmentSales*.08]
+  ].map(x=>`<div class="record"><strong>${x[0]}</strong><br>${x[1]} · ${money(x[2])}<br><span class="note">最近消費日落在查詢區間內</span></div>`).join('');
+  $('courseRecords').innerHTML = [
+    ['頭皮檢測體驗',d.coursesUsed,'使用中'],['眠舒壓護理',Math.round(d.coursesUsed*.34),'需回訪'],['微生態平衡',Math.round(d.coursesUsed*.22),'穩定']
+  ].map(x=>`<div class="record"><strong>${x[0]}</strong><br>使用 ${x[1]} 堂 · ${x[2]}</div>`).join('');
+  $('voucherRecords').innerHTML = [`體驗票 ${d.vouchers} 張`,`轉課程 ${d.voucherCourses} 張`,`轉換率 ${pct(d.voucherRate)}`].map(x=>`<div class="record"><strong>${x}</strong></div>`).join('');
+  $('healthRows').innerHTML = Object.entries(d.health).map(([k,v])=>{const s=state(v);return `<div class="health-row"><strong>${k}</strong>${bar(v,s[1]==='green'?'leaf':s[1]==='yellow'?'gold':'red')}<b>${v}</b></div>`}).join('');
+  const sc=state(d.healthScore); $('scoreBox').style.setProperty('--scorePct', d.healthScore+'%'); $('scoreBox').style.setProperty('--scoreColor', sc[1]==='green'?'#67a95f':sc[1]==='yellow'?'#e3ad3f':'#d65d5d'); $('scoreText').textContent=d.healthScore; $('scoreState').textContent=sc[0];
+  const low = Object.entries(d.health).sort((a,b)=>a[1]-b[1])[0];
+  $('scoreAdvice').textContent = `最低指標為「${low[0]}」${low[1]} 分。建議總部針對此項安排督導追蹤，並在下次月會檢討改善幅度。`;
+  window.currentData = d;
+}
+function makeOpsDeck(){const d=window.currentData||buildData();$('slidePreview').textContent=`營運狀況簡報｜${d.store.name}\n期間：${$('startDate').value} 至 ${$('endDate').value}\n\n1. 即時客流：今日到店 ${d.trafficToday} 人，目前館內 ${d.inStore} 人。\n2. 票券轉課程：${d.vouchers} 張體驗票，${d.voucherCourses} 張轉課程，轉換率 ${pct(d.voucherRate)}。\n3. 客戶消費：本期總消費 ${money(d.totalSales)}，其中療程 ${money(d.treatmentSales)}、產品 ${money(d.productSales)}、組合 ${money(d.comboSales)}。\n4. 課程使用：已使用 ${d.coursesUsed} 堂 / 已購買 ${d.coursesBought} 堂，使用率 ${pct(d.courseUsageRate)}。\n5. 頭療師業績：最高銷售 ${d.staff.sort((a,b)=>b.sales-a.sales)[0].name}，建議追蹤低於 80% 進度者。\n\n總部建議：針對黃燈或紅燈項目安排業務陪跑，下一週追蹤改善。`;}
+function makeHealthDeck(){const d=window.currentData||buildData();const low=Object.entries(d.health).sort((a,b)=>a[1]-b[1])[0];$('slidePreview').textContent=`營運健檢簡報｜${d.store.name}\n月份：${$('startDate').value.slice(0,7)}\n\n門店健康分數：${d.healthScore} 分（${state(d.healthScore)[0]}）\n\n六項健康指標：\n${Object.entries(d.health).map(([k,v])=>`- ${k}：${v} 分（${state(v)[0]}）`).join('\n')}\n\n主要風險：${low[0]}最低，需優先改善。\n\n建議行動：\n1. 由業務主管設定下月改善目標。\n2. 督導每週檢查該指標相關 SOP。\n3. 月底比對健康分數是否提升。`;}
+function downloadDeck(){const text=$('slidePreview').textContent;const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Fairy營運簡報大綱.txt';a.click();URL.revokeObjectURL(a.href);}
+officialStores.forEach(s=>{const o=document.createElement('option');o.value=s.name;o.textContent=`${s.name}｜${s.area}`;$('storeSelect').appendChild(o);});
+['storeSelect','startDate','endDate'].forEach(id=>$(id).addEventListener('change',render));$('queryBtn').onclick=render;$('makeOpsDeck').onclick=makeOpsDeck;$('makeHealthDeck').onclick=makeHealthDeck;$('downloadOpsDeck').onclick=downloadDeck;$('downloadHealthDeck').onclick=downloadDeck;render();
+</script>
+</body>
+</html>
+
+
